@@ -21,9 +21,17 @@ install-plugin-deps:
 		npm install serverless
 
 deploy-infra:
-	make awslogin
 	export AWS_PROFILE="$(AWS_ACCOUNT)-session" && sceptre launch mysite/site -y
+
+deploy-site:
 	aws s3 sync dist "s3://$(SITE_DOMAIN)"
+	aws s3api put-object-acl --bucket $(SITE_DOMAIN) --key admin/config.yml --acl public-read
+	aws s3api put-object-acl --bucket $(SITE_DOMAIN) --key admin/index.html --acl public-read
+
+deploy-all:
+	make awslogin
+	make deploy-infra
+	make deploy-site
 
 clean:
 	rm -rf netlify-serverless-oauth2-backend
