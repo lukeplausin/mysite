@@ -1,0 +1,76 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+Mappings:
+  RegionMap:
+    eu-west-1:
+      S3hostedzoneID: Z1BKCTXD74EZPE
+      websiteendpoint: s3-website-eu-west-1.amazonaws.com
+Parameters:
+  RootDomainName:
+    Description: Domain name for your website (example.com)
+    Type: String
+Resources:
+  RootBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName:
+        Ref: RootDomainName
+      AccessControl: PublicRead
+      WebsiteConfiguration:
+        IndexDocument: index.html
+        ErrorDocument: 404.html
+  WWWBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName:
+        Fn::Join:
+        - ''
+        - - www.
+          - Ref: RootDomainName
+      AccessControl: BucketOwnerFullControl
+      WebsiteConfiguration:
+        RedirectAllRequestsTo:
+          HostName:
+            Ref: RootBucket
+  # myDNS:
+  #   Type: AWS::Route53::RecordSetGroup
+  #   Properties:
+  #     HostedZoneName:
+  #       Fn::Join:
+  #       - ''
+  #       - - Ref: RootDomainName
+  #         - "."
+  #     Comment: Zone apex alias.
+  #     RecordSets:
+  #     - Name:
+  #         Ref: RootDomainName
+  #       Type: A
+  #       AliasTarget:
+  #         HostedZoneId:
+  #           Fn::FindInMap:
+  #           - RegionMap
+  #           - Ref: AWS::Region
+  #           - S3hostedzoneID
+  #         DNSName:
+  #           Fn::FindInMap:
+  #           - RegionMap
+  #           - Ref: AWS::Region
+  #           - websiteendpoint
+  #     - Name:
+  #         Fn::Join:
+  #         - ''
+  #         - - www.
+  #           - Ref: RootDomainName
+  #       Type: CNAME
+  #       TTL: '900'
+  #       ResourceRecords:
+  #       - Fn::GetAtt:
+  #         - WWWBucket
+  #         - DomainName
+Outputs:
+  WebsiteURL:
+    Value:
+      Fn::GetAtt:
+      - RootBucket
+      - WebsiteURL
+    Description: URL for website hosted on S3

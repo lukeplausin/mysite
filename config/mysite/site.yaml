@@ -1,0 +1,8 @@
+template_path: static-site-bucket.yaml
+parameters:
+  RootDomainName: stat.luke.plaus.in
+sceptre_user_data:
+  hello: world
+# stack_name: my-static-site
+stack_tags:
+  project: static-site-cms
