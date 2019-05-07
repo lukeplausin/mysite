@@ -36,11 +36,12 @@ Resources:
     Type: AWS::S3::Bucket
     Properties:
       BucketName:
-        Fn::Join:
-        - '-'
-        - Fn::Split:
-          - '.'
-          - Ref: RootDomainName
+        Ref: RootDomainName
+        # Fn::Join:
+        # - '-'
+        # - Fn::Split:
+        #   - '.'
+        #   - Ref: RootDomainName
       AccessControl: PublicRead
       WebsiteConfiguration:
         IndexDocument: index.html
@@ -50,13 +51,14 @@ Resources:
     Properties:
       BucketName:
         Fn::Join:
-        - '-'
-        - - www
-          - Fn::Join:
-            - '-'
-            - Fn::Split:
-              - '.'
-              - Ref: RootDomainName
+        - ''
+        - - www.
+          - Ref: RootDomainName
+          # - Fn::Join:
+          #   - '-'
+          #   - Fn::Split:
+          #     - '.'
+          #     - Ref: RootDomainName
       AccessControl: BucketOwnerFullControl
       WebsiteConfiguration:
         RedirectAllRequestsTo:
