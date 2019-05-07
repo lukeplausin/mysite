@@ -8,7 +8,11 @@ awslogin:
 	export AWS_PROFILE="$(AWS_ACCOUNT)-session"
 	
 install-deps:
-	npm install serverless -g
+	make clean
+	git clone https://github.com/marksteele/netlify-serverless-oauth2-backend.git
+	cd netlify-serverless-oauth2-backend
+	npm install
+	npm install serverless
 
 clean:
-	
+	rm -rf netlify-serverless-oauth2-backend
